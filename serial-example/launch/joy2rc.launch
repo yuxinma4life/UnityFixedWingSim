@@ -1,0 +1,9 @@
+<launch>
+ <!-- joy node -->
+  <node respawn="true" pkg="joy"
+        type="joy_node" name="joy" >
+    <param name="dev" type="string" value="/dev/input/js0" />
+    <param name="deadzone" value="0.02" />
+  </node>
+  <node pkg="serial_example" type="serial_example_node" name="serial_example_node" output="screen"/> 
+</launch>
