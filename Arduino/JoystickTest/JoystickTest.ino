@@ -22,7 +22,7 @@ void setup() {
   // control over when the computer receives updates, but it does
   // require you to manually call Joystick.send_now().
   Joystick.useManualSend(true);
-  for (int i=0; i<numButtons; i++) {
+  for (int i = 0; i < numButtons; i++) {
     pinMode(i, INPUT_PULLUP);
   }
   Serial.println("Begin Complete Joystick Test");
@@ -30,57 +30,64 @@ void setup() {
 
 byte allButtons[numButtons];
 byte prevButtons[numButtons];
-int angle=0;
+int angle = 0;
+int throttle = 511;
 
 void loop() {
   // read 6 analog inputs and use them for the joystick axis
-  Joystick.X(analogRead(0));
-  Joystick.Y(analogRead(1));
-  Joystick.Z(analogRead(2));
-  Joystick.Zrotate(analogRead(3));
-  Joystick.sliderLeft(analogRead(4));
-  Joystick.sliderRight(analogRead(5));
+    Joystick.X(511);
+    Joystick.Y(511);
+    Joystick.Z(511);
+    Joystick.Zrotate(511 - throttle);
+   //Joystick.sliderLeft(511+ throttle);
+   //Joystick.sliderRight(511+ throttle);
+   Joystick.slider(511+ throttle);
+  throttle += 1;
+  if(throttle > 511) throttle = 0;
   
+  //  Joystick.sliderLeft(analogRead(4));
+  //  Joystick.sliderRight(analogRead(5));
+
   // read digital pins and use them for the buttons
-  for (int i=0; i<numButtons; i++) {
-    if (digitalRead(i)) {
-      // when a pin reads high, the button is not pressed
-      // the pullup resistor creates the "on" signal
-      allButtons[i] = 0;
-    } else {
-      // when a pin reads low, the button is connecting to ground.
-      allButtons[i] = 1;
-    }
-    Joystick.button(i + 1, allButtons[i]);
-  }
+  //  for (int i=0; i<numButtons; i++) {
+  //    if (digitalRead(i)) {
+  //      // when a pin reads high, the button is not pressed
+  //      // the pullup resistor creates the "on" signal
+  //      allButtons[i] = 0;
+  //    } else {
+  //      // when a pin reads low, the button is connecting to ground.
+  //      allButtons[i] = 1;
+  //    }
+  //    Joystick.button(i + 1, allButtons[i]);
+  //  }
 
   // make the hat switch automatically move in a circle
-  angle = angle + 1;
-  if (angle >= 360) angle = 0;
-  Joystick.hat(angle);
-  
+  //  angle = angle + 1;
+  //  if (angle >= 360) angle = 0;
+  //  Joystick.hat(angle);
+
   // Because setup configured the Joystick manual send,
   // the computer does not see any of the changes yet.
   // This send_now() transmits everything all at once.
   Joystick.send_now();
-  
+
   // check to see if any button changed since last time
   boolean anyChange = false;
-  for (int i=0; i<numButtons; i++) {
+  for (int i = 0; i < numButtons; i++) {
     if (allButtons[i] != prevButtons[i]) anyChange = true;
     prevButtons[i] = allButtons[i];
   }
-  
+
   // if any button changed, print them to the serial monitor
   if (anyChange) {
     Serial.print("Buttons: ");
-    for (int i=0; i<numButtons; i++) {
+    for (int i = 0; i < numButtons; i++) {
       Serial.print(allButtons[i], DEC);
     }
     Serial.println();
   }
-  
+
   // a brief delay, so this runs "only" 200 times per second
-  delay(5);
+  delay(30);
 }
 
